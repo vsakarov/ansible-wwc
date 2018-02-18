@@ -1,0 +1,44 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    dot_spacemacs_url: https://raw.githubusercontent.com/vsakarov/dotfiles/master/spacemacs
+    home_dir: /home/vasil
+    username: vasil
+  tasks:
+    - name: Clone spacemacs
+      git:
+        repo: https://github.com/syl20bnr/spacemacs
+        dest: "{{ home_dir }}/.emacs.d"
+        update: no
+      become: yes
+      become_user: "{{ username }}"
+
+    - name: Download .spacemacs
+      get_url:
+        url: "{{ dot_spacemacs_url }}"
+        dest: "{{ home_dir }}/.spacemacs"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        force: no
+
+    - name: Set vim autosave
+      lineinfile:
+        dest: "{{ home_dir }}/.vimrc"
+        line: "{{ item }}"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        create: yes
+      with_items:
+        - set autoread
+        - set autowrite
+
+    - name: test
+      lineinfile:
+        dest: "{{ home_dir }}/.vimrc"
+        line: test 321
+        regexp: "^test.*"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        create: yes

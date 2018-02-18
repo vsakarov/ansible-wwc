@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Автоматизиране на работна среда с Ansible</title>
+<meta name="author" content="(Васил Сакъров)"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/serif.css" id="theme"/>
+
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'http://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+<style type="text/css">pre.src { padding: 5px; }</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section>
+<section id="slide-org1c07666" class="center">
+<h2 id="org1c07666">Автоматизиране на работна среда с Ansible</h2>
+<p>
+Васил Сакъров
+</p>
+
+<p>
+github: vsakarov
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-org5084b48">
+<h2 id="org5084b48">Какво е Ansible?</h2>
+<p>
+В научната фантастика ansible е устройство, което може да предава информация мигновено (по-бързо от светлината) на огромни разстояния.
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-org35ad82d" data-background="https://upload.wikimedia.org/wikipedia/en/e/e4/Ender%27s_game_cover_ISBN_0312932081.jpg" data-background-size="contain">
+<h2 id="org35ad82d"></h2>
+
+</section>
+</section>
+<section>
+<section id="slide-orgdd1ef3b">
+<h2 id="orgdd1ef3b">Какво е Ansible?</h2>
+<p>
+Софтуер за автоматизация
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-orga3caecb">
+<h2 id="orga3caecb">Приложения</h2>
+<ul>
+<li>автоматизация на повтарящи се задачи</li>
+<li>инсталиране и конфигуриране на софтуер</li>
+<li>управление на нещата около нас</li>
+<li>оркестриране</li>
+<li>инфраструктура като код</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgb24ad9d">
+<h2 id="orgb24ad9d">Особености</h2>
+<ul>
+<li>няма агент</li>
+<li>базиран на secure shell</li>
+<li>python</li>
+<li>yaml</li>
+<li>jinja</li>
+<li>декларативен синтаксис</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgbbfeca6">
+<h2 id="orgbbfeca6">Категории с модули</h2>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">Cloud</td>
+<td class="org-left">Inventory</td>
+<td class="org-left">Remote Management</td>
+</tr>
+
+<tr>
+<td class="org-left">Clustering</td>
+<td class="org-left">Messaging</td>
+<td class="org-left">Source Control</td>
+</tr>
+
+<tr>
+<td class="org-left">Commands</td>
+<td class="org-left">Monitoring</td>
+<td class="org-left">Storage</td>
+</tr>
+
+<tr>
+<td class="org-left">Crypto</td>
+<td class="org-left">Net Tools</td>
+<td class="org-left">System</td>
+</tr>
+
+<tr>
+<td class="org-left">Database</td>
+<td class="org-left">Network</td>
+<td class="org-left">Utilities</td>
+</tr>
+
+<tr>
+<td class="org-left">Files</td>
+<td class="org-left">Notification</td>
+<td class="org-left">Web Infrastructure</td>
+</tr>
+
+<tr>
+<td class="org-left">Identity</td>
+<td class="org-left">Packaging</td>
+<td class="org-left">Windows</td>
+</tr>
+</tbody>
+</table>
+
+
+</section>
+</section>
+<section>
+<section id="slide-org052fa83">
+<h2 id="org052fa83">Ansible galaxy</h2>
+Хранилище за роли: <a href="https://galaxy.ansible.com/explore" target="_blank" style="font-size: 1.2em;">🌌</a>
+
+</section>
+</section>
+<section>
+<section id="slide-orgd6877b3">
+<h2 id="orgd6877b3">Ansible в действие</h2>
+<div class="org-src-container">
+
+<pre  class="src src-bash">$ ansible localhost -m ping
+localhost | <span style="color: #0084C8; font-weight: bold;">SUCCESS</span> =&gt; <span style="color: #707183;">{</span>
+    <span style="color: #4E9A06;">"changed"</span>: false,
+    <span style="color: #4E9A06;">"ping"</span>: <span style="color: #4E9A06;">"pong"</span>
+<span style="color: #707183;">}</span>
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org08aa2bc">
+<h2 id="org08aa2bc">Здравей свят</h2>
+<div class="org-src-container">
+
+<pre  class="src src-bash">$ ansible localhost -m debug -e <span style="color: #4E9A06;">"msg=Hello World"</span>
+localhost | <span style="color: #0084C8; font-weight: bold;">SUCCESS</span> =&gt; <span style="color: #707183;">{</span>
+    <span style="color: #4E9A06;">"changed"</span>: false,
+    <span style="color: #4E9A06;">"msg"</span>: <span style="color: #4E9A06;">"Hello world!"</span>
+<span style="color: #707183;">}</span>
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgd8306ce">
+<h2 id="orgd8306ce">Информация за системата</h2>
+<div class="org-src-container">
+
+<pre  class="src src-bash">$ ansible localhost -m setup
+localhost | <span style="color: #0084C8; font-weight: bold;">SUCCESS</span> =&gt; <span style="color: #707183;">{</span>
+    <span style="color: #4E9A06;">"ansible_facts"</span>: <span style="color: #7388d6;">{</span>
+        <span style="color: #4E9A06;">"ansible_all_ipv4_addresses"</span>: <span style="color: #909183;">[</span>
+            <span style="color: #4E9A06;">"192.168.1.143"</span>,
+            <span style="color: #4E9A06;">"172.18.0.1"</span>,
+            <span style="color: #4E9A06;">"172.17.0.1"</span>
+        <span style="color: #909183;">]</span>,
+....
++ &#1086;&#1097;&#1077; <span style="color: #F5666D;">1000</span> &#1088;&#1077;&#1076;&#1072;
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org5f9328b">
+<h2 id="org5f9328b">Сценарий/Playbook</h2>
+<div class="org-src-container">
+
+<pre  class="src src-yaml">- <span style="color: #0084C8; font-weight: bold;">hosts</span>: localhost
+  <span style="color: #0084C8; font-weight: bold;">connection</span>: local
+  <span style="color: #0084C8; font-weight: bold;">gather_facts</span>: <span style="color: #F5666D;">no</span>
+  <span style="color: #0084C8; font-weight: bold;">tasks</span>:
+    - <span style="color: #0084C8; font-weight: bold;">debug</span>:
+        <span style="color: #0084C8; font-weight: bold;">msg</span>: Hello WWC
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre  class="src src-bash">$ ansible-playbook <span style="color: #F5666D;">01-hello.yml</span>
+PLAY <span style="color: #707183;">[</span>localhost<span style="color: #707183;">]</span> ******************************************************
+
+TASK <span style="color: #707183;">[</span>debug<span style="color: #707183;">]</span> **********************************************************
+ok: <span style="color: #707183;">[</span>localhost<span style="color: #707183;">]</span> =&gt; <span style="color: #707183;">{</span>
+    <span style="color: #4E9A06;">"msg"</span>: <span style="color: #4E9A06;">"Hello WWC"</span>
+<span style="color: #707183;">}</span>
+
+PLAY RECAP ************************************************************
+localhost              : <span style="color: #0084C8; font-weight: bold;">ok</span>=<span style="color: #F5666D;">1</span>    <span style="color: #0084C8; font-weight: bold;">changed</span>=<span style="color: #F5666D;">0</span>    <span style="color: #0084C8; font-weight: bold;">unreachable</span>=<span style="color: #F5666D;">0</span>    <span style="color: #0084C8; font-weight: bold;">failed</span>=<span style="color: #F5666D;">0</span>
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org4fc7582">
+<h2 id="org4fc7582">Ansible и кравите</h2>
+<div class="org-src-container">
+
+<pre  class="src src-yaml">- <span style="color: #0084C8; font-weight: bold;">hosts</span>: localhost
+  <span style="color: #0084C8; font-weight: bold;">connection</span>: local
+  <span style="color: #0084C8; font-weight: bold;">gather_facts</span>: <span style="color: #F5666D;">no</span>
+  <span style="color: #0084C8; font-weight: bold;">tasks</span>:
+    - <span style="color: #0084C8; font-weight: bold;">apt</span>:
+        <span style="color: #0084C8; font-weight: bold;">name</span>: cowsay
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre  class="src src-bash">$ sudo ansible-playbook <span style="color: #F5666D;">02-cowsay.yml</span>
+PLAY <span style="color: #707183;">[</span>localhost<span style="color: #707183;">]</span> ******************************************************
+
+TASK <span style="color: #707183;">[</span>apt<span style="color: #707183;">]</span> ************************************************************
+changed: <span style="color: #707183;">[</span>localhost<span style="color: #707183;">]</span>
+
+PLAY RECAP ************************************************************
+localhost              : <span style="color: #0084C8; font-weight: bold;">ok</span>=<span style="color: #F5666D;">1</span>    <span style="color: #0084C8; font-weight: bold;">changed</span>=<span style="color: #F5666D;">1</span>    <span style="color: #0084C8; font-weight: bold;">unreachable</span>=<span style="color: #F5666D;">0</span>    <span style="color: #0084C8; font-weight: bold;">failed</span>=<span style="color: #F5666D;">0</span>
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org7f6bf22">
+<h2 id="org7f6bf22">Ansible и кравите 2</h2>
+<div class="org-src-container">
+
+<pre  class="src src-text">&lt; PLAY [localhost] &gt;
+ ------------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+
+ ______________
+&lt; TASK [debug] &gt;
+ --------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+
+ok: [localhost] =&gt; {
+    "msg": "Hello WWC"
+}
+ ____________
+&lt; PLAY RECAP &gt;
+ ------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+
+localhost               : ok=1    changed=0    unreachable=0    failed=0
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org1435b38" class="center">
+<h2 id="org1435b38">Демонстрация</h2>
+</section>
+</section>
+<section>
+<section id="slide-orgaec97a3" class="center">
+<h2 id="orgaec97a3">Въпроси?</h2>
+</section>
+</section>
+</div>
+</div>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: false,
+progress: false,
+history: false,
+center: false,
+slideNumber: false,
+rollingLinks: false,
+keyboard: true,
+overview: true,
+margin: 0.00,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'fade', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'fast',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+});
+</script>
+</body>
+</html>

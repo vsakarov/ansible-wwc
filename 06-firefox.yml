@@ -1,0 +1,53 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: yes
+  vars:
+    home_dir: /home/vasil
+    username: vasil
+    extensions_dir: /usr/lib/firefox-addons/extensions
+    extensions:
+      # https everywhere
+      - id: https-everywhere@eff.org
+        url: https://addons.mozilla.org/firefox/downloads/latest/https-everywhere/addon-229918-latest.xpi
+      # uBlock Origin
+      - id: uBlock0@raymondhill.net
+        url: https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/addon-607454-latest.xpi
+      # lastpass
+      - id: support@lastpass.com 
+        url: https://addons.mozilla.org/firefox/downloads/latest/lastpass-password-manager/addon-800645-latest.xpi
+      # vimium
+      - id: "{d7742d87-e61d-4b78-b8a1-b469842139fa}"
+        url: https://addons.mozilla.org/firefox/downloads/latest/vimium-ff/addon-866847-latest.xpi
+  tasks:
+    - get_url:
+        url: "{{ item.url }}"
+        dest: "{{ extensions_dir }}/{{ item.id }}.xpi"
+        mode: 0644
+      with_items: "{{ extensions }}"
+
+    - name: Find Firefox profile path
+      find:
+        paths: "{{ home_dir }}/.mozilla/firefox/"
+        patterns: "*default"
+        file_type: directory
+      register: firefox_find
+
+    - name: Firefox user config
+      lineinfile:
+        dest: "{{ firefox_find.files[0].path }}/user.js"
+        line: "{{ item }}"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        create: yes
+      with_items:
+        - '# Mozilla User Preferences'
+        # Show your windows and tabs from last time
+        - 'user_pref("browser.startup.page", 3);'
+        # Disable web site notifications
+        - 'user_pref("dom.webnotifications.enabled", false);'
+        # Remember logins and passwords for websites
+        - 'user_pref("signon.rememberSignons", false);'
+        # Disable full screen animation
+        - 'user_pref("toolkit.cosmeticAnimations.enabled", false);'
+      when: firefox_find.matched != 0

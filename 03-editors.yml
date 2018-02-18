@@ -1,0 +1,28 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Install editors
+      apt:
+        name: "{{ item }}"
+      with_items:
+        - eclipse
+        - emacs
+        - neovim
+        - vim
+
+    - name: Install snap packages
+      command: "snap install {{ item.name }} {{ item.options }}"
+      args:
+        chdir: /root
+        creates: "/snap/{{ item.name }}"
+      with_items:
+        - { name: 'atom', options: '--classic' }
+        - { name: 'vscode', options: '--classic' }
+
+  # # ansible-galaxy search android studio
+  # # ansible-galaxy install wtanaka.android-studio
+  # roles:
+  #   - wtanaka.android-studio
+

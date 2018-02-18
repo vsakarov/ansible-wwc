@@ -1,0 +1,185 @@
+#+Title: Автоматизиране на работна среда с Ansible
+#+Author: Васил Сакъров
+#+Email: vasil.sakarov@gmail.com
+#+DATE: 20.02.2018
+
+#+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/3.0.0/
+#+REVEAL_THEME: serif
+#+REVEAL_HLEVEL: 2
+#+REVEAL_TRANS: fade
+# #+REVEAL_PLUGINS: (highlight)
+# #+REVEAL_EXTRA_JS: //cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/yaml.min.js
+#+REVEAL_SPEED: fast
+#+REVEAL_MARGIN: 0.0
+#+REVEAL_HEAD_PREAMBLE: <style type="text/css">pre.src { padding: 5px; }</style>
+#+OPTIONS: reveal_title_slide:nil
+#+OPTIONS: reveal_progress:nil
+#+OPTIONS: reveal_slide_number:nil
+#+OPTIONS: reveal_center:nil
+#+OPTIONS: reveal_control:nil
+#+OPTIONS: reveal_history:nil
+#+OPTIONS: num:nil toc:nil
+
+* Автоматизиране на работна среда с Ansible
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: class="center"
+:END:
+Васил Сакъров
+
+github: vsakarov
+
+* Какво е Ansible?
+В научната фантастика ansible е устройство, което може да предава информация мигновено (по-бързо от светлината) на огромни разстояния.
+
+* 
+:PROPERTIES:
+:reveal_background: https://upload.wikimedia.org/wikipedia/en/e/e4/Ender%27s_game_cover_ISBN_0312932081.jpg
+:reveal_background_size: contain
+:END:
+
+* Какво е Ansible?
+Софтуер за автоматизация
+
+* Приложения
+- автоматизация на повтарящи се задачи
+- инсталиране и конфигуриране на софтуер
+- управление на нещата около нас
+- оркестриране
+- инфраструктура като код
+
+* Особености
+- няма агент
+- базиран на secure shell
+- python
+- yaml
+- jinja
+- декларативен синтаксис
+
+* Категории с модули
+|------------+--------------+--------------------|
+| Cloud      | Inventory    | Remote Management  |
+| Clustering | Messaging    | Source Control     |
+| Commands   | Monitoring   | Storage            |
+| Crypto     | Net Tools    | System             |
+| Database   | Network      | Utilities          |
+| Files      | Notification | Web Infrastructure |
+| Identity   | Packaging    | Windows            |
+|------------+--------------+--------------------|
+
+
+* Ansible galaxy
+
+#+REVEAL_HTML: Хранилище за роли: <a href="https://galaxy.ansible.com/explore" target="_blank" style="font-size: 1.2em;">🌌</a>
+
+* Ansible в действие
+#+BEGIN_SRC bash
+$ ansible localhost -m ping
+localhost | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+#+END_SRC
+
+* Здравей свят
+#+BEGIN_SRC bash
+$ ansible localhost -m debug -e "msg=Hello World"
+localhost | SUCCESS => {
+    "changed": false,
+    "msg": "Hello world!"
+}
+#+END_SRC
+
+* Информация за системата
+#+BEGIN_SRC bash
+$ ansible localhost -m setup
+localhost | SUCCESS => {
+    "ansible_facts": {
+        "ansible_all_ipv4_addresses": [
+            "192.168.1.143",
+            "172.18.0.1",
+            "172.17.0.1"
+        ],
+....
++ още 1000 реда
+#+END_SRC
+* Сценарий/Playbook
+#+BEGIN_SRC yaml
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - debug:
+        msg: Hello WWC
+#+END_SRC
+#+BEGIN_SRC bash
+$ ansible-playbook 01-hello.yml
+PLAY [localhost] ******************************************************
+
+TASK [debug] **********************************************************
+ok: [localhost] => {
+    "msg": "Hello WWC"
+}
+
+PLAY RECAP ************************************************************
+localhost              : ok=1    changed=0    unreachable=0    failed=0
+#+END_SRC
+* Ansible и кравите
+#+BEGIN_SRC yaml
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - apt:
+        name: cowsay
+#+END_SRC
+#+BEGIN_SRC bash
+$ sudo ansible-playbook 02-cowsay.yml
+PLAY [localhost] ******************************************************
+
+TASK [apt] ************************************************************
+changed: [localhost]
+
+PLAY RECAP ************************************************************
+localhost              : ok=1    changed=1    unreachable=0    failed=0
+#+END_SRC
+* Ansible и кравите 2
+#+BEGIN_SRC text
+< PLAY [localhost] >
+ ------------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+
+ ______________
+< TASK [debug] >
+ --------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+
+ok: [localhost] => {
+    "msg": "Hello WWC"
+}
+ ____________
+< PLAY RECAP >
+ ------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+
+localhost               : ok=1    changed=0    unreachable=0    failed=0
+#+END_SRC
+* Демонстрация
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: class="center"
+:END:
+* Въпроси?
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: class="center"
+:END:
